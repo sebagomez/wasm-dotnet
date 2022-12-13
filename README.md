@@ -14,3 +14,5 @@ Then I'd like to create a library as a wasm module, and reference that module (a
 Next step would be to create a web app, something that listens on port 80 and replies back.
 
 We'll see where this takes me
+
+_Follow the instructions on the [.NET WASI SDK](https://github.com/dotnet/dotnet-wasi-sdk) repo if you want to build it yourself. So far I have not changed anything_
