@@ -12,6 +12,8 @@ The first thing I want to do accomplish is just having a minimal Hello World con
 
 _*Note*: I used wasmer with the console app but it's not as mature as wasmtime, so I'm using wasmtime from now on._
 
+![](./res/web.png)
+
 Then I'd like to create a library as a wasm module, and reference that module (already compiled) from any WASM app. Ideally, I could also reference any WASMI compatible module, it could have been written in Rust, C/C++, Go, or whatever.  
 Next step would be to create a web app, something that listens on port 80 and replies back.
 
