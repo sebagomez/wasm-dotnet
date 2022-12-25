@@ -11,4 +11,8 @@
     <PackageReference Include="Wasi.Sdk" Version="0.1.2-preview.10061" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\lib\lib.csproj" />
+  </ItemGroup>
+
 </Project>

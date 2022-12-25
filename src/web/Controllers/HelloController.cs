@@ -1,3 +1,4 @@
+using lib;
 using Microsoft.AspNetCore.Mvc;
 
 namespace web.Controllers;
@@ -6,19 +7,19 @@ namespace web.Controllers;
 [Route("[controller]")]
 public class HelloController : ControllerBase
 {
-    private readonly ILogger<HelloController> _logger;
+	private readonly ILogger<HelloController> _logger;
 
-    public HelloController(ILogger<HelloController> logger)
-    {
-        _logger = logger;
-    }
+	public HelloController(ILogger<HelloController> logger)
+	{
+		_logger = logger;
+	}
 
-    [HttpGet]
-    public string Get(string? name)
-    {
-        if (string.IsNullOrEmpty(name))
-			name = "World";
+	[HttpGet]
+	public string Get(string? name)
+	{
+		if (string.IsNullOrEmpty(name))
+			name = "Web World";
 
-		return $"Hello {name}!";
-    }
+		return Greet.SayHello(name);
+	}
 }

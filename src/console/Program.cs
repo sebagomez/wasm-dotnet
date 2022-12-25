@@ -1,7 +1,9 @@
-﻿internal class Program
+﻿using lib;
+
+internal class Program
 {
 	private static void Main(string[] args)
 	{
-		Console.WriteLine("Hello, World!");
+		Console.WriteLine(Greet.SayHello("Console World"));
 	}
 }
