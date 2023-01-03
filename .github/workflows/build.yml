@@ -14,8 +14,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: |
-        docker build -o ./bin -f wasm.Dockerfile .
+        docker build -o $(pwd)/bin -f wasm.Dockerfile .
         pwd
-        ls ./bin
+        ls $(pwd)/bin
         
       #run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
