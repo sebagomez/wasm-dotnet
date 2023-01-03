@@ -15,6 +15,7 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build -o ./bin -f wasm.Dockerfile .
+        pwd
         ls ./bin
         
       #run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
