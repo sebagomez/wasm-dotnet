@@ -14,7 +14,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: |
-        export out=/app
+        export out=$(pwd)/app
+        mkdir $out
         echo $out
         docker build -o $out -f wasm.Dockerfile .
         ls $out
