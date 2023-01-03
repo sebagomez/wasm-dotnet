@@ -2,8 +2,13 @@ internal class Program
 {
 	private static void Main(string[] args)
 	{
-		//var builder = WebApplication.CreateBuilder(args);
-		var builder = WebApplication.CreateBuilder(args).UseWasiConnectionListener();
+#if WASM
+	var builder = WebApplication.CreateBuilder(args).UseWasiConnectionListener();
+#endif
+
+#if !WASM
+		var builder = WebApplication.CreateBuilder(args);
+#endif
 
 		// Add services to the container.
 

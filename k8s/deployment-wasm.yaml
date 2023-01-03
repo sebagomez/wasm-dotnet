@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapi-wasm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapi-wasm
+  template:
+    metadata:
+      labels:
+        app: webapi-wasm
+    spec:
+      runtimeClassName: wasmtime-slight-v1
+      containers:
+        - name: webapi
+          image: sebagomez/webapi-wasm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapi-wasm
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: webapi-wasm

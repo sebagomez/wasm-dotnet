@@ -17,8 +17,14 @@ public class HelloController : ControllerBase
 	[HttpGet]
 	public string Get(string? name)
 	{
+#if WASM
 		if (string.IsNullOrEmpty(name))
-			name = "Web World";
+			name = "WASM World";
+#endif
+#if !WASM
+		if (string.IsNullOrEmpty(name))
+			name = "Container World";
+#endif
 
 		return Greet.SayHello(name);
 	}
