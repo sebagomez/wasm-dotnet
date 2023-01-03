@@ -208,3 +208,6 @@ INFO[0002] Digest: sha256:faeaab610046be8ec3d8f612677b8688faf036a45719f6c28d0f39
 ```
 
 After pushing to the registry I don't get any errors, but I don't see the image anywhere in GitHub and I can't pull it. Will try to push it from a GitHub action
+
+https://www.honlsoft.com/blog/2022-02-01-using-github-actions-to-build-docker-images
+

@@ -19,13 +19,15 @@ jobs:
         mkdir $out
         echo $out
         docker build -o $out -f wasm.Dockerfile .
-    - name: Install wasm-to-oci
-      run: ls ./app
+
     - name: Install wasm-to-oci
       run: | 
         curl https://github.com/engineerd/wasm-to-oci/releases/download/v0.1.2/linux-amd64-wasm-to-oci -o wasm-to-oci
         chmod +x ./wasm-to-oci
-        ./wasm-to-oci --help
         
         
+    - name: wasm-to-oci
+      run: ./wasm-to-oci --help
+
+      
       #run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
