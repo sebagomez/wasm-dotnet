@@ -250,7 +250,7 @@ Apply Runtime and deployment
 Create Image pull secret
 
 ```bash
-kubectl create secret docker-registry regcred --docker-server=https://ghcr.io --docker-username=sebagomez --docker-password=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 --docker-email=sebastiangomezcorrea@gmail.com
+kubectl create secret docker-registry regcred --docker-server=https://ghcr.io --docker-username=sebagomez --docker-password=<GITHUB__REGISTRY_TOKEN> --docker-email=sebastiangomezcorrea@gmail.com
 ```
 
 The image was successfully found but pulling it failed with the following error
