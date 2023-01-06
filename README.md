@@ -137,20 +137,27 @@ ERRO[0001] error waiting for container: context canceled
 ###
 
 Followed steps from here: https://docs.krustlet.dev/howto/krustlet-on-minikube/
-CONFIG_DIR=$CONFIG_DIR FILE_NAME=$FILE_NAME bash <(curl https://raw.githubusercontent.com/krustlet/krustlet/main/scripts/bootstrap.sh)
 
+```bash
+export CONFIG_DIR=$HOME/.krustlet/config
+export FILE_NAME=bootstrap.conf
+CONFIG_DIR=$CONFIG_DIR FILE_NAME=$FILE_NAME bash <(curl https://raw.githubusercontent.com/krustlet/krustlet/main/scripts/bootstrap.sh)
+```
+
+```bash
 KUBECONFIG=~/.krustlet/config/kubeconfig \
   krustlet-wasi \
   --node-ip 192.168.64.1 \
   --node-name=krustlet \
   --bootstrap-file=${HOME}/.krustlet/config/bootstrap.conf
+```
 
-  Got stuck here and posted this issue: [Error setting up krustlet on Minikube [MacOS]](https://github.com/krustlet/krustlet/issues/734)
+Got stuck here and posted this issue: [Error setting up krustlet on Minikube [MacOS]](https://github.com/krustlet/krustlet/issues/734)
 
-  Will try to setup an EKS cluster following this [doc](https://learn.microsoft.com/en-us/azure/aks/use-wasi-node-pools). 
-  That article uses wasmtime, and we used docker for wasmedge, so I'm not sure it'll work. I haven't tried my compiled wasm apps with wasmedge, so I'll give that a try 
+Will try to setup an EKS cluster following this [doc](https://learn.microsoft.com/en-us/azure/aks/use-wasi-node-pools). 
+That article uses wasmtime, and we used docker for wasmedge, so I'm not sure it'll work. I haven't tried my compiled wasm apps with wasmedge, so I'll give that a try 
 
-  ```bash
+```bash
 ❯ wasmedge /Users/seba/dev/seba/wasm-dotnet/src/console/bin/Debug/net7.0/MyFirstWasiApp.wasm
 Hello Console World!
 ```
@@ -211,3 +218,131 @@ After pushing to the registry I don't get any errors, but I don't see the image 
 
 https://www.honlsoft.com/blog/2022-02-01-using-github-actions-to-build-docker-images
 
+I just realized that the wasm-to-oci push had worked! I went to ghcr.io/sebagomez/wasm-dotnet:latest in my browser and I saw the image
+
+I will remove it and try again.. it worked! I'll try the workflow later
+
+I'll keep working on getting my AKS cluster to run WASM nodes, using [krustlet](https://docs.krustlet.dev/howto/krustlet-on-azure/)
+
+```bash
+az aks get-credentials --name krustlet --resource-group eks-wasm    
+```
+
+This deployment failed, it seems to be an old documentation so I'll try one more time with Azure's documentation and if that fails I'll try [krustlet on EKS](https://docs.krustlet.dev/howto/krustlet-on-eks/).
+
+I had an old az cli tool and I had an issue with python, thus [this issue](https://github.com/Azure/azure-cli/issues/25011) was on my side.
+
+```bash 
+az aks get-credentials --resource-group eks-wasm --name wasm-cluster
+```
+
+```bash
+az aks nodepool add \
+    --resource-group eks-wasm \
+    --cluster-name wasm-cluster \
+    --name mywasipool \
+    --node-count 1 \
+    --workload-runtime WasmWasi
+```
+
+Apply Runtime and deployment
+
+Create Image pull secret
+
+```bash
+kubectl create secret docker-registry regcred --docker-server=https://ghcr.io --docker-username=sebagomez --docker-password=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 --docker-email=sebastiangomezcorrea@gmail.com
+```
+
+The image was successfully found but pulling it failed with the following error
+> Failed to pull image "ghcr.io/sebagomez/wasm-dotnet:latest": rpc error: code = Unknown desc = failed to pull and unpack image "ghcr.io/sebagomez/wasm-dotnet:latest": failed to unpack image on snapshotter overlayfs: mismatched image rootfs and manifest layers
+
+Ok, we're going to use [MicroK8s](https://microk8s.io) and follow [these instructions](https://docs.krustlet.dev/howto/krustlet-on-microk8s/).
+
+https://microk8s.io/docs/working-with-kubectl#heading--kubectl-macos
+
+```bash
+ microk8s config >  ~/.kube/config 
+ ```
+
+```bash
+export CONFIG_DIR=$HOME/.krustlet/config
+export FILE_NAME=bootstrap.conf
+CONFIG_DIR=$CONFIG_DIR FILE_NAME=$FILE_NAME bash <(curl https://raw.githubusercontent.com/krustlet/krustlet/main/scripts/bootstrap.sh)
+```
+
+```bash
+KUBECONFIG=~/.krustlet/config/kubeconfig krustlet-wasi --node-ip=127.0.0.1 --node-name=krustlet --bootstrap-file=${HOME}/.krustlet/config/bootstrap.conf
+Error: ApiError: Unauthorized: Unauthorized (ErrorResponse { status: "Failure", message: "Unauthorized", reason: "Unauthorized", code: 401 })
+
+Caused by:
+    Unauthorized: Unauthorized
+```
+
+This is probably because I have not enabled [bootstrap token auth](https://docs.krustlet.dev/howto/krustlet-on-microk8s/#prerequisites)
+
+Every help I've found redirects to snap... which is a package manager for ubuntu, but in Mac I used brew, yet when I run microk8s inspect I get the following output
+
+```bash
+❯ microk8s inspect
+Inspecting Certificates
+Inspecting services
+  Service snap.microk8s.daemon-cluster-agent is running
+  Service snap.microk8s.daemon-containerd is running
+  Service snap.microk8s.daemon-apiserver-kicker is running
+  Service snap.microk8s.daemon-kubelite is running
+  Copy service arguments to the final report tarball
+Inspecting AppArmor configuration
+Gathering system information
+  Copy processes list to the final report tarball
+  Copy snap list to the final report tarball
+  Copy VM name (or none) to the final report tarball
+  Copy disk usage information to the final report tarball
+  Copy memory usage information to the final report tarball
+  Copy server uptime to the final report tarball
+  Copy current linux distribution to the final report tarball
+  Copy openSSL information to the final report tarball
+  Copy network configuration to the final report tarball
+Inspecting kubernetes cluster
+  Inspect kubernetes cluster
+Inspecting juju
+  Inspect Juju
+Inspecting kubeflow
+  Inspect Kubeflow
+
+Building the report tarball
+  Report tarball is at /var/snap/microk8s/4374/inspection-report-20230106_120459.tar.gz
+```
+
+What the hell is that snap doing on my Mac? and why it mentions that there's a tarball at a location that does not exesits?  
+Well, it does exists, but not on my Mac, it does on the virtual machine that multipass is running, called microk8s-vm, running this command, shows the file that VM's file system
+
+```bash
+❯ multipass exec microk8s-vm -- ls /var/snap/microk8s/4374/inspection-report-20230106_120459.tar.gz
+/var/snap/microk8s/4374/inspection-report-20230106_120459.tar.gz
+```
+
+So the following command allows me to edit the kube-apiserver arguments
+
+```bash
+multipass exec microk8s-vm -- sudo vi /var/snap/microk8s/current/args/kube-apiserver
+```
+
+And in that file I added the `--enable-bootstrap-token-auth=true` flag. After that I need to restart the server.
+
+```bash
+microk8s stop
+microk8s start
+```
+
+```bash
+export mainIP=$(ifconfig en0 | grep "inet " | awk '{ print $2 }')
+KUBECONFIG=~/.krustlet/config/kubeconfig krustlet-wasi --node-ip=$mainIP --node-name=krustlet --bootstrap-file=${HOME}/.krustlet/config/bootstrap.conf
+Error: ApiError: the server could not find the requested resource: NotFound (ErrorResponse { status: "Failure", message: "the server could not find the requested resource", reason: "NotFound", code: 404 })
+
+Caused by:
+    the server could not find the requested resource: NotFound
+```
+
+I've seen some people having similar problems and the project doesn't seem to be so active. So, I'm moving away from krustlet (again) and will try to comeup with another solution to run WASM modules on Kubernetes.
+
+It's not being an easy task.
