@@ -346,3 +346,56 @@ Caused by:
 I've seen some people having similar problems and the project doesn't seem to be so active. So, I'm moving away from krustlet (again) and will try to comeup with another solution to run WASM modules on Kubernetes.
 
 It's not being an easy task.
+
+One more shot... I found a "simple" [blog post](https://developer.okta.com/blog/2022/01/28/webassembly-on-kubernetes-with-rust) from last year that shows how to do it with [KinD](https://kind.sigs.k8s.io/)... I'll give that a try
+
+```bash
+export mainIP=$(ifconfig en0 | grep "inet " | awk '{ print $2 }')
+KUBECONFIG=~/.krustlet/config/kubeconfig \
+  krustlet-wasi \
+  --node-ip=$mainIP \
+  --node-name=krustlet \
+  --bootstrap-file=${HOME}/.krustlet/config/bootstrap.conf
+```
+
+According to [this issue](https://github.com/krustlet/krustlet/issues/700) a toleration must be added to an existent DaemonSet before installing krustlet because otherwise we'll see this error when installing.
+
+> Jan 06 13:53:37.175 ERROR kubelet::state::common::image_pull: error=unsupported media type: application/vnd.docker.distribution.manifest.list.v2+json
+
+The toleration I added in the kindnet DaemonSet in the kube-system namespace was the following:
+
+```yaml
+tolerations:
+- key: kubernetes.io/arch
+  operator: Equal
+  value: wasm32-wasi
+  effect: NoSchedule
+```
+
+I finnally added the following nodeSelector and tolerations to my Deployment but I'm still getting an error
+
+```yaml
+  nodeSelector:
+    kubernetes.io/arch: "wasm32-wasi"
+  tolerations:
+    - key: "kubernetes.io/arch"
+      operator: "Equal"
+      value: "wasm32-wasi"
+      effect: "NoExecute"
+    - key: "node.kubernetes.io/network-unavailable"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "kubernetes.io/arch"
+      operator: "Equal"
+      value: "wasm32-wasi"
+      effect: "NoSchedule"
+```
+
+> Jan 07 01:27:03.353 ERROR kubelet::state::common::image_pull: error=resgistry did not return a digest header
+
+But, I did try the example from [here](https://docs.krustlet.dev/howto/krustlet-on-microk8s/#step-3-test-that-things-work) and it worked!
+So I guess I'll create a Console WASM module that writes to standard output... networking seems to be the issue here
+
+Nope, not a networking issue... same thing happened with the ghcr.io/sebagomez/wasm-console:latest image which is just a console app
+
+It could be related to the GitHub registry? I hope not

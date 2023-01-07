@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapi-wasm
+  name: wasm-console
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: webapi-wasm
+      app: wasm-console
   template:
     metadata:
       labels:
-        app: webapi-wasm
+        app: wasm-console
     spec:
       imagePullSecrets:
         - name: regcred
       containers:
         - name: webapi
-          image: ghrc.io/sebagomez/webapi-wasm
+          image: ghcr.io/sebagomez/wasm-console:latest
       nodeSelector:
         kubernetes.io/arch: "wasm32-wasi"
       tolerations:
@@ -31,16 +31,3 @@ spec:
           operator: "Equal"
           value: "wasm32-wasi"
           effect: "NoSchedule"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: webapi-wasm
-spec:
-  #type: LoadBalancer
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  selector:
-    app: webapi-wasm
