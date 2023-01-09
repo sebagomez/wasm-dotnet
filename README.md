@@ -430,5 +430,18 @@ patch DaemonSet
 kubectl patch ds -n ingress nginx-ingress-microk8s-controller --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/ports/-", "value":{"containerPort":1234,"name":"my-port-1234","hostPort":1234,"protocol":"TCP"}}]'
 ```
 
-Docker Dekstop
+KinD
+
+https://github.com/Liquid-Reply/kind-crun-wasm
+
+```bash
+kind create cluster --image ghcr.io/liquid-reply/kind-crun-wasm:v1.23.4
+kubectl run -it --rm --restart=Never wasi-demo --image=ghcr.io/sebagomez/wasm-dotnet:latest
+
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}' 
+```
+
+This didn't work eother... but this seems 👇 promissing
+
+https://github.com/bluebrown/kind-wasmtime
 
