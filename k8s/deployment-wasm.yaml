@@ -13,10 +13,12 @@ spec:
         app: webapi-wasm
     spec:
       imagePullSecrets:
-        - name: regcred
+        - name: pullsecret
+        #- name: regcred
       containers:
         - name: webapi
-          image: ghrc.io/sebagomez/webapi-wasm
+          #image: ghrc.io/sebagomez/webapi-wasm
+          image: sebsregistry.azurecr.io/wasm-dotnet:latest
       nodeSelector:
         kubernetes.io/arch: "wasm32-wasi"
       tolerations:

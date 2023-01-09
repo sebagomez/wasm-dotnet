@@ -399,3 +399,36 @@ So I guess I'll create a Console WASM module that writes to standard output... n
 Nope, not a networking issue... same thing happened with the ghcr.io/sebagomez/wasm-console:latest image which is just a console app
 
 It could be related to the GitHub registry? I hope not
+
+I'm going to follow [this doc](https://docs.krustlet.dev/intro/tutorial02/) and create the Azure registry
+
+```bash
+az group create --name wasm-test --location eastus
+az acr create --sku Basic --resource-group wasm-test --name sebsregistry
+az acr login --name sebsregistry
+
+wasm-to-oci push bin/web.wasm sebsregistry.azurecr.io/wasm-dotnet:latest 
+
+kubectl create secret docker-registry pullsecret \
+    --docker-server=sebsregistry.azurecr.io \
+    --docker-username=$SP_APP_ID \
+    --docker-password=$SP_PASSWD
+```
+
+
+MicroK8s 
+
+```bash
+multipass shell microk8s-vm
+```
+
+KinD
+
+patch DaemonSet
+
+```bash
+kubectl patch ds -n ingress nginx-ingress-microk8s-controller --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/ports/-", "value":{"containerPort":1234,"name":"my-port-1234","hostPort":1234,"protocol":"TCP"}}]'
+```
+
+Docker Dekstop
+
