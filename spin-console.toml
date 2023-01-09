@@ -1,0 +1,13 @@
+spin_version = "1"
+authors = ["Seb Gomez <sebastiangomezcorrea@gmail.com>"]
+description = "WASM Console DotNet sample"
+name = "console-dotnet"
+trigger = { type = "http", base = "/" }
+version = "0.1.1"
+
+[[component]]
+id = "console-dotnet"
+source = "./src/console/bin/Debug/net7.0/MyFirstWasiApp.wasm"
+[component.trigger]
+route = "/"
+executor = { type = "wagi" }
