@@ -445,3 +445,37 @@ This didn't work eother... but this seems 👇 promissing
 
 https://github.com/bluebrown/kind-wasmtime
 
+## Take two
+
+Docker Desktop now suppoerts wasmtime, so let's see
+
+This command build the app
+
+```bash
+dotnet build ./src/web/web.csproj --configuration Release --property WASM=true --output ./bin
+```
+
+=== 
+
+Let's go back to console apps
+
+```bash
+dotnet build ./src/console/hello.csproj --configuration Release --output ./bin
+```
+
+Now let's run the app 
+
+```bash
+$ wasmtime ./bin/hello.wasm 
+Hello Console World!
+```
+
+Let's build the image!
+```bash
+docker buildx build --platform wasi/wasm32 -t sebagomez/hello-wasm -f Dockerfile .
+```
+There's an error building the image :( 
+
+After going through [this blog|https://www.docker.com/blog/announcing-dockerwasm-technical-preview-2/] post I encountered [this error|https://github.com/docker/for-win/issues/13410] to run docker with Wasmtime
+
+docker buildx build --platform wasi/wasm32 -t hellowasm .
