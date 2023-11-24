@@ -10,5 +10,5 @@ WORKDIR /app
 ENTRYPOINT ["dotnet", "hello.dll"]
 
 # docker build -f dotnet.Dockerfile -t sebagomez/hello-wasm:dotnet .
-# docker run sebagomez/hello-wasm:dotnet
+# docker run --rm sebagomez/hello-wasm:dotnet
 # docker push sebagomez/hello-wasm:dotnet
