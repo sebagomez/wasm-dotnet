@@ -1,13 +1,14 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 as builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as builder
 
 COPY ./src /src
 
-RUN dotnet build --configuration Release --output /app /src/web/web.csproj 
+RUN dotnet publish -c Release -o /app  ./src/console/hello.csproj 
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+FROM mcr.microsoft.com/dotnet/runtime:8.0 as runtime
 COPY --from=builder /app /app
 WORKDIR /app
-ENTRYPOINT ["dotnet", "web.dll"]
+ENTRYPOINT ["dotnet", "hello.dll"]
 
-# docker build -f dotnet.Dockerfile -t sebagomez/webapi-dll .
-# docker push sebagomez/webapi-dll
+# docker build -f dotnet.Dockerfile -t sebagomez/hello-wasm:dotnet .
+# docker run sebagomez/hello-wasm:dotnet
+# docker push sebagomez/hello-wasm:dotnet

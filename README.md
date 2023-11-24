@@ -473,6 +473,7 @@ Hello Console World!
 Let's build the image!
 ```bash
 docker buildx build --platform wasi/wasm32 -t sebagomez/hello-wasm -f Dockerfile .
+docker buildx build --platform wasi/wasm -t sebagomez/hello-wasm -f Dockerfile .
 ```
 There's an error building the image :( 
 

@@ -3,9 +3,8 @@ public class Greet
 {
 	public static string SayHello(string? name)
 	{
-		if (name is null)
-			name = "World";
+		name ??= "World";
 
-		return $"Hello {name}!";
+		return $"Hello {name}";
 	}
 }
