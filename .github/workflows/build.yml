@@ -22,7 +22,6 @@ jobs:
 
     - name: Build wasm
       run: | 
-        dotnet workload install wasm-tools
         dotnet workload install wasi-experimental
         curl -L https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-20/wasi-sdk-20.0-linux.tar.gz -o wasi-sdk-20.0.tar.gz
         tar -xf wasi-sdk-20.0.tar.gz

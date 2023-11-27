@@ -1,4 +1,4 @@
 bin/
 obj/
 
-wapm_packages
+wasm-dotnet.sln
