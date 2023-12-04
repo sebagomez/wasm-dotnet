@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-wasm
+spec:
+  template:
+    metadata:
+      annotations:
+        module.wasm.image/variant: compat-smart
+    spec:
+      containers:
+      - image: sebagomez/hello-wasm:wasi
+        name: wasm-test
+        args: 
+        - WASM in K8s
+      restartPolicy: Never
+      runtimeClassName: wasmtime
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "wasm"
+        effect: "NoSchedule"

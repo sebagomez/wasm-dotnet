@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-dotnet
+spec:
+  template:
+    spec:
+      containers:
+      - image: sebagomez/hello-wasm:dotnet
+        name: hello
+        args: 
+        - World
+      restartPolicy: Never
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "x64"
+        effect: "NoSchedule"
