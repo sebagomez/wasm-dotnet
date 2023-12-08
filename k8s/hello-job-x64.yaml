@@ -9,7 +9,7 @@ spec:
       - image: sebagomez/hello-wasm:dotnet
         name: hello
         args: 
-        - World
+        - "40"
       restartPolicy: Never
       tolerations:
       - key: "arch"

@@ -12,7 +12,7 @@ spec:
       - image: sebagomez/hello-wasm:wasi
         name: wasm-test
         args: 
-        - WASM in K8s
+        - "40"
       restartPolicy: Never
       runtimeClassName: wasmtime
       tolerations:
