@@ -1,4 +1,6 @@
-
+default:
+  @just --list
+  
 kube_start:
 	minikube start  --nodes 2 --container-runtime='containerd'
 	kubectl annotate node minikube-m02 kwasm.sh/kwasm-node=true
