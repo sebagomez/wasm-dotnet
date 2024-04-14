@@ -10,13 +10,11 @@ spec:
     spec:
       containers:
       - image: sebagomez/hello-wasm:wasi
-        name: wasm-test
-        args: 
-        - "40"
+        name: hello
+        # args: 
+        # - "40"
+        imagePullPolicy: Always
       restartPolicy: Never
-      runtimeClassName: wasmtime
-      tolerations:
-      - key: "arch"
-        operator: "Equal"
-        value: "wasm"
-        effect: "NoSchedule"
+      runtimeClassName: wasmtime-spin-v1 # needed for Azure, wasmtime for local minikube
+      nodeSelector:
+        run: wasm

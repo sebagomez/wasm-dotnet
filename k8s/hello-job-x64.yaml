@@ -8,11 +8,9 @@ spec:
       containers:
       - image: sebagomez/hello-wasm:dotnet
         name: hello
-        args: 
-        - "40"
+        # args: 
+        # - "40"
+        imagePullPolicy: Always
       restartPolicy: Never
-      tolerations:
-      - key: "arch"
-        operator: "Equal"
-        value: "x64"
-        effect: "NoSchedule"
+      nodeSelector:
+        run: dotnet

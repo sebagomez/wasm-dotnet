@@ -1,4 +1,9 @@
 bin/
 obj/
 
-wasm-dotnet.sln
+env.sh
+azurek8s
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
